@@ -10,18 +10,6 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 mongoose.set('strictQuery',false);
-// const connectDB = async ()=>{
-//     try{
-//         const conn = await mongoose.connect(process.env.MONGO_URI);
-//         console.log(`MongoDB Connected: ${conn.connection.host}`);
-//     }
-//     catch(error)
-//     {
-//         console.log(error);
-//         process.exit(1);
-//     }
-// }
-
 mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log(`CONNECTED TO MONGO!`);
@@ -116,19 +104,38 @@ app.post('/', function (req, res) {
     console.log('Your response has been received.');
 });
 
+// app.post('/services/donate', function (req, res) {
+
+//     // console.log(req.body);
+//     const requestedLocation = _.startCase(req.body.location).trim();
+
+//     Reuse_org.find({ $or: [{ location: requestedLocation }, { location: 'PAN India' }] })
+//         .then(function (foundItems) {
+//             res.render('services/donate', { items: foundItems });
+//         })
+//         .catch(function (err) {
+//             console.log(err);
+//         });
+// });
 app.post('/services/donate', function (req, res) {
-
-    // console.log(req.body);
     const requestedLocation = _.startCase(req.body.location).trim();
+    console.log('Searching reuseorgs for:', requestedLocation);
 
-    Reuse_org.find({ $or: [{ location: requestedLocation }, { location: 'PAN India' }] })
+    Reuse_org.find({
+        $or: [
+            { location: { $regex: `^${requestedLocation}$`, $options: 'i' } },
+            { location: { $regex: '^PAN India$', $options: 'i' } }
+        ]
+    })
         .then(function (foundItems) {
+            console.log('Found items:', foundItems);
             res.render('services/donate', { items: foundItems });
         })
         .catch(function (err) {
             console.log(err);
         });
 });
+
 
 app.post('/services/recycle', function (req, res) {
     // console.log(req.body);
