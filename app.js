@@ -9,15 +9,27 @@ app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+mongoose.set('strictQuery',false);
+const connectDB = async ()=>{
+    try{
+        const conn = await mongoose.connect(process.env.MONGO_URI);
+        console.log(`MongoDB Connected: ${conn.connection.host}`);
+    }
+    catch(error)
+    {
+        console.log(error);
+        process.exit(1);
+    }
+}
 
-mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log(`CONNECTED TO MONGO!`);
-    })
-    .catch((err) => {
-        console.log(`MONGO CONNECTION ERROR!`);
-        console.log(err);
-    });
+// mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(() => {
+//         console.log(`CONNECTED TO MONGO!`);
+//     })
+//     .catch((err) => {
+//         console.log(`MONGO CONNECTION ERROR!`);
+//         console.log(err);
+//     });
 
 
 // ReUse Organisations
