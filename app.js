@@ -33,7 +33,7 @@ const connectDB = async ()=>{
 
 
 // ReUse Organisations
-const Reuse_org = mongoose.model('resueorg', new mongoose.Schema({
+const Reuse_org = mongoose.model('reuseorg', new mongoose.Schema({
     name: String,
     description: String,
     type: String, // pick-up or on-site
